@@ -5,6 +5,8 @@ import { Logger } from '@overnightjs/logger';
 import { DefaultController } from './default/Default.controller';
 import swagger from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
+import { QueueController } from './queue/Queue.controller';
+import { RedisClientFF } from './redis/RedisClientFF';
 
 export class FreeFolkServer extends Server {
 
@@ -13,12 +15,13 @@ export class FreeFolkServer extends Server {
     }
 
     public async start(): Promise<void> {
+        RedisClientFF.init();
         const specs = swagger({
             apis: ['**/*.controller.*'],
             swaggerDefinition: {
                 info: {
-                    description: 'Theater API',
-                    title: 'Movie theater',
+                    description: 'Queue API',
+                    title: 'Queue',
                     version: '1.0.0',
                 },
             },
@@ -27,6 +30,7 @@ export class FreeFolkServer extends Server {
         this.app.use(urlencoded({extended: true}));
         this.addControllers([
             new DefaultController(),
+            new QueueController(),
         ]);
         this.app.use(
             '/swagger',
@@ -36,7 +40,7 @@ export class FreeFolkServer extends Server {
         this.app.listen(
             ServerConfig.PORT, 
             () => {
-                Logger.Info(`Server listenning at http://localhost:${ServerConfig.PORT}`, true);
+                Logger.Info(`Queue listenning at http://localhost:${ServerConfig.PORT}`, true);
                 Logger.Info(`Swagger at http://localhost:${ServerConfig.PORT}/swagger`, true);
             }
         );
