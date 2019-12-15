@@ -22,3 +22,10 @@ export class NPushDto {
     @ApiProperty({ type: [Object]})
     payload: Record<string, any>[];
 }
+
+export class NPopResponseDto {
+    @ApiProperty({
+        type: [Object]
+    })
+    payload: Record<string, any>[];
+}
